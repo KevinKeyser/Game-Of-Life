@@ -1,4 +1,6 @@
-﻿namespace GameOfLife.Models
+﻿using System.Text.Json.Serialization;
+
+namespace GameOfLife.Models
 {
     public struct Options : IEquatable<Options>
     {
@@ -10,6 +12,7 @@
         public int UniverseWidth => universeWidth;
         public int UniverseHeight => universeHeight;
 
+        [JsonConstructor]
         public Options(int timerInterval, int universeWidth, int universeHeight)
         {
             this.timerInterval = timerInterval;

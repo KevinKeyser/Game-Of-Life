@@ -47,7 +47,6 @@
             this.fileMenuItemOptions = new System.Windows.Forms.ToolStripMenuItem();
             this.newFileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importFileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveFileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -84,6 +83,7 @@
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.statusbar.SuspendLayout();
             this.toolbar.SuspendLayout();
             this.menubar.SuspendLayout();
@@ -93,6 +93,7 @@
             this.menubarContainer.ContentPanel.SuspendLayout();
             this.menubarContainer.TopToolStripPanel.SuspendLayout();
             this.menubarContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // statusbar
@@ -227,7 +228,6 @@
             this.fileMenuItemOptions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newFileMenuItem,
             this.openFileMenuItem,
-            this.importFileMenuItem,
             this.fileSeparator1,
             this.saveFileMenuItem,
             this.fileSeparator2,
@@ -254,13 +254,6 @@
             this.openFileMenuItem.Size = new System.Drawing.Size(146, 22);
             this.openFileMenuItem.Text = "Open";
             this.openFileMenuItem.Click += new System.EventHandler(this.openFileMenuItem_Click);
-            // 
-            // importFileMenuItem
-            // 
-            this.importFileMenuItem.Name = "importFileMenuItem";
-            this.importFileMenuItem.Size = new System.Drawing.Size(146, 22);
-            this.importFileMenuItem.Text = "Import";
-            this.importFileMenuItem.Click += new System.EventHandler(this.importFileMenuItem_Click);
             // 
             // fileSeparator1
             // 
@@ -352,7 +345,7 @@
             // 
             this.startMenuItem.Name = "startMenuItem";
             this.startMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.startMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.startMenuItem.Size = new System.Drawing.Size(124, 22);
             this.startMenuItem.Text = "Start";
             this.startMenuItem.Click += new System.EventHandler(this.startMenuItem_Click);
             // 
@@ -361,7 +354,7 @@
             this.pauseMenuItem.Enabled = false;
             this.pauseMenuItem.Name = "pauseMenuItem";
             this.pauseMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.pauseMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pauseMenuItem.Size = new System.Drawing.Size(124, 22);
             this.pauseMenuItem.Text = "Pause";
             this.pauseMenuItem.Click += new System.EventHandler(this.pauseMenuItem_Click);
             // 
@@ -369,14 +362,14 @@
             // 
             this.nextMenuItem.Name = "nextMenuItem";
             this.nextMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
-            this.nextMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.nextMenuItem.Size = new System.Drawing.Size(124, 22);
             this.nextMenuItem.Text = "Next";
             this.nextMenuItem.Click += new System.EventHandler(this.nextMenuItem_Click);
             // 
             // toMenuItem
             // 
             this.toMenuItem.Name = "toMenuItem";
-            this.toMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.toMenuItem.Size = new System.Drawing.Size(124, 22);
             this.toMenuItem.Text = "To";
             this.toMenuItem.Click += new System.EventHandler(this.toMenuItem_Click);
             // 
@@ -542,6 +535,19 @@
             this.timer.Interval = 20;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
+            // openFileDialog
+            // 
+            this.openFileDialog.DefaultExt = "gol";
+            // 
+            // saveFileDialog
+            // 
+            this.saveFileDialog.DefaultExt = "gol";
+            this.saveFileDialog.FileName = "gameoflife";
+            // 
+            // errorProvider
+            // 
+            this.errorProvider.ContainerControl = this;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -569,6 +575,7 @@
             this.menubarContainer.TopToolStripPanel.PerformLayout();
             this.menubarContainer.ResumeLayout(false);
             this.menubarContainer.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -593,7 +600,6 @@
         private ToolStripMenuItem fileMenuItemOptions;
         private ToolStripMenuItem newFileMenuItem;
         private ToolStripMenuItem openFileMenuItem;
-        private ToolStripMenuItem importFileMenuItem;
         private ToolStripSeparator fileSeparator1;
         private ToolStripMenuItem saveFileMenuItem;
         private ToolStripSeparator fileSeparator2;
@@ -631,5 +637,6 @@
         private OpenFileDialog openFileDialog;
         private SaveFileDialog saveFileDialog;
         private ToolStripMenuItem wrapUniverseMenuItem;
+        private ErrorProvider errorProvider;
     }
 }

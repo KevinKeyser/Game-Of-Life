@@ -2,35 +2,52 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GameOfLife.Models
 {
     public class GameOfLifeSimulation : ISimulation
     {
-        private bool[,] universe;
         private static FontFamily fontFamily = new FontFamily("Arial");
         private static Font font = new Font(fontFamily, 10, FontStyle.Regular, GraphicsUnit.Pixel);
 
+        private int aliveCount = 0;
+        private int generation = 0;
+        private bool[,] universe;
+
+        [JsonIgnore]
+        public int AliveCount => aliveCount;
+        public int Generation => generation;
+
+        public bool[,] Universe => universe;
+
+        [JsonIgnore]
         public int UniverseWidth
         {
             get => universe.GetLength(0);
             set => ResizeUniverse(value, UniverseHeight);
         }
 
+        [JsonIgnore]
         public int UniverseHeight
         {
             get => universe.GetLength(1);
             set => ResizeUniverse(UniverseWidth, value);
         }
 
-        private int aliveCount = 0;
-        public int AliveCount
+        [JsonConstructor]
+        public GameOfLifeSimulation(int generation, bool[,] universe)
         {
-            get => aliveCount;
-            set
+            this.generation = generation;
+            this.universe = universe;
+
+            for(var x = 0; x < UniverseWidth; x++)
             {
-                aliveCount = value;
+                for(var y = 0; y < UniverseHeight; y++)
+                {
+                    aliveCount += universe[x, y] ? 1 : 0;
+                }
             }
         }
 
@@ -65,6 +82,7 @@ namespace GameOfLife.Models
             {
                 return;
             }
+            generation = 0;
             aliveCount -= universe[x, y] ? 1 : 0;
             universe[x, y] = value;
             aliveCount += universe[x, y] ? 1 : 0;
@@ -84,7 +102,8 @@ namespace GameOfLife.Models
                 }
             }
             universe = tempUniverse;
-            AliveCount = tempAliveCount;
+            aliveCount = tempAliveCount;
+            generation++;
         }
 
         public void Draw(Graphics graphics, Settings settings)
@@ -95,7 +114,7 @@ namespace GameOfLife.Models
             var cellWidth = graphicsWidth / UniverseWidth;
             var cellHeight = graphicsHeight / UniverseHeight;
 
-            var brush = Brushes.Black;
+            var brush = new SolidBrush(settings.CellColor);
 
             for (int x = 0; x < UniverseWidth; x++)
             {
@@ -130,6 +149,7 @@ namespace GameOfLife.Models
 
         private void ResizeUniverse(int width, int height)
         {
+            generation = 0;
             var tempUniverse = new bool[width, height];
             var minWidth = Math.Min(width, UniverseWidth);
             var minHeight = Math.Min(height, UniverseHeight);

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace GameOfLife.Models
 {
@@ -145,6 +146,7 @@ namespace GameOfLife.Models
             }
         }
 
+        [JsonConstructor]
         public Settings(bool isHudVisible, bool isGridVisible, bool isNeighborCountVisible, bool isWrappingUniverse, 
             Color backColor, Color cellColor, Color gridColor, Color grid10xColor, Options options)
         {

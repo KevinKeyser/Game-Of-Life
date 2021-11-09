@@ -46,6 +46,7 @@ namespace GameOfLife
         public MainForm()
         {
             InitializeComponent();
+            Text = $"Game of Life (.NET {Environment.Version})";
             observableSettings.PropertyChanging += (sender, e) => DisposeSettings();
             observableSettings.PropertyChanged += (sender, e) => InitializeSettings();
             observableSettings.TrackedObject = GetSavedSettings();

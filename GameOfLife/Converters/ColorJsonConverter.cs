@@ -16,7 +16,7 @@ namespace GameOfLife.Converters
                 return defaultColor;
             }
             
-            var stringValues = stringValue.Split(",").Select(value => value.Trim());
+            var stringValues = stringValue.Split(',').Select(value => value.Trim());
             if(stringValues.Count() != 4)
             {
                 return defaultColor;
@@ -25,7 +25,7 @@ namespace GameOfLife.Converters
             try
             {
                 var values = stringValues.Select(value => Int32.Parse(value))
-                    .Select(value => Math.Clamp(value, 0, 255))
+                    .Select(value => Clamp(value, 0, 255))
                     .ToArray();
                 
                 return Color.FromArgb(values[0], values[1], values[2], values[3]);
@@ -40,6 +40,23 @@ namespace GameOfLife.Converters
         {
             var stringValue = $"{value.A},{value.R},{value.G},{value.B}";
             writer.WriteStringValue(stringValue);
+        }
+
+        private int Clamp(int value, int min, int max)
+        {
+#if NET5_0_OR_GREATER
+            return Math.Clamp(value, min, max);
+#else
+            if (value < min)
+            {
+                return min;
+            }
+            if (value > max)
+            {
+                return max;
+            }
+            return value;
+#endif
         }
     }
 }

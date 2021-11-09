@@ -8,7 +8,16 @@ namespace GameOfLife
         [STAThread]
         static void Main()
         {
+#if NET6_0_OR_GREATER
             ApplicationConfiguration.Initialize();
+#elif NET5_0_OR_GREATER
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+#else
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+#endif
             Application.Run(new MainForm());
         }
     }

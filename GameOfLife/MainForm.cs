@@ -334,7 +334,7 @@ namespace GameOfLife
             #region Draw HUD
             if(CurrentSettings.IsHudVisible)
             {
-                var size = new SizeF(150, 75);
+                var size = new SizeF(150, 50);
                 var brushColor = Lerp(Color.White, Color.Transparent, 0.50f);
                 graphics.FillPolygon(new SolidBrush(brushColor),
                     new[]{

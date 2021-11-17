@@ -29,20 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.statusbar = new System.Windows.Forms.StatusStrip();
             this.generationsStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.intervalStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.aliveStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.seedStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolbar = new System.Windows.Forms.ToolStrip();
-            this.newFileButton = new System.Windows.Forms.ToolStripButton();
-            this.openFileButton = new System.Windows.Forms.ToolStripButton();
-            this.saveFileButton = new System.Windows.Forms.ToolStripButton();
             this.toolbarSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.playButton = new System.Windows.Forms.ToolStripButton();
-            this.pauseButton = new System.Windows.Forms.ToolStripButton();
-            this.stepButton = new System.Windows.Forms.ToolStripButton();
             this.menubar = new System.Windows.Forms.MenuStrip();
             this.fileMenuItemOptions = new System.Windows.Forms.ToolStripMenuItem();
             this.newFileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,16 +67,21 @@
             this.optionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.resetMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.reloadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolbarContainer = new System.Windows.Forms.ToolStripContainer();
-            this.graphicsPanel = new GameOfLife.DoubleBufferPanel();
             this.menubarContainer = new System.Windows.Forms.ToolStripContainer();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.newFileButton = new System.Windows.Forms.ToolStripButton();
+            this.openFileButton = new System.Windows.Forms.ToolStripButton();
+            this.saveFileButton = new System.Windows.Forms.ToolStripButton();
+            this.playButton = new System.Windows.Forms.ToolStripButton();
+            this.pauseButton = new System.Windows.Forms.ToolStripButton();
+            this.stepButton = new System.Windows.Forms.ToolStripButton();
+            this.graphicsPanel = new GameOfLife.DoubleBufferPanel();
             this.statusbar.SuspendLayout();
             this.toolbar.SuspendLayout();
             this.menubar.SuspendLayout();
@@ -103,9 +101,10 @@
             this.intervalStatusLabel,
             this.aliveStatusLabel,
             this.seedStatusLabel});
-            this.statusbar.Location = new System.Drawing.Point(0, 589);
+            this.statusbar.Location = new System.Drawing.Point(0, 508);
             this.statusbar.Name = "statusbar";
-            this.statusbar.Size = new System.Drawing.Size(634, 22);
+            this.statusbar.Padding = new System.Windows.Forms.Padding(1, 0, 12, 0);
+            this.statusbar.Size = new System.Drawing.Size(543, 22);
             this.statusbar.TabIndex = 0;
             // 
             // generationsStatusLabel
@@ -148,65 +147,10 @@
             this.toolbar.Size = new System.Drawing.Size(156, 25);
             this.toolbar.TabIndex = 2;
             // 
-            // newFileButton
-            // 
-            this.newFileButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.newFileButton.Image = ((System.Drawing.Image)(resources.GetObject("newFileButton.Image")));
-            this.newFileButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.newFileButton.Name = "newFileButton";
-            this.newFileButton.Size = new System.Drawing.Size(23, 22);
-            this.newFileButton.Click += new System.EventHandler(this.newFileButton_Click);
-            // 
-            // openFileButton
-            // 
-            this.openFileButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.openFileButton.Image = ((System.Drawing.Image)(resources.GetObject("openFileButton.Image")));
-            this.openFileButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.openFileButton.Name = "openFileButton";
-            this.openFileButton.Size = new System.Drawing.Size(23, 22);
-            this.openFileButton.Click += new System.EventHandler(this.openFileButton_Click);
-            // 
-            // saveFileButton
-            // 
-            this.saveFileButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.saveFileButton.Image = ((System.Drawing.Image)(resources.GetObject("saveFileButton.Image")));
-            this.saveFileButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.saveFileButton.Name = "saveFileButton";
-            this.saveFileButton.Size = new System.Drawing.Size(23, 22);
-            this.saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
-            // 
             // toolbarSeparator1
             // 
             this.toolbarSeparator1.Name = "toolbarSeparator1";
             this.toolbarSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // playButton
-            // 
-            this.playButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.playButton.Image = ((System.Drawing.Image)(resources.GetObject("playButton.Image")));
-            this.playButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.playButton.Name = "playButton";
-            this.playButton.Size = new System.Drawing.Size(23, 22);
-            this.playButton.Click += new System.EventHandler(this.playButton_Click);
-            // 
-            // pauseButton
-            // 
-            this.pauseButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.pauseButton.Enabled = false;
-            this.pauseButton.Image = ((System.Drawing.Image)(resources.GetObject("pauseButton.Image")));
-            this.pauseButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.pauseButton.Name = "pauseButton";
-            this.pauseButton.Size = new System.Drawing.Size(23, 22);
-            this.pauseButton.Click += new System.EventHandler(this.pauseButton_Click);
-            // 
-            // stepButton
-            // 
-            this.stepButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.stepButton.Image = ((System.Drawing.Image)(resources.GetObject("stepButton.Image")));
-            this.stepButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.stepButton.Name = "stepButton";
-            this.stepButton.Size = new System.Drawing.Size(23, 22);
-            this.stepButton.Click += new System.EventHandler(this.stepButton_Click);
             // 
             // menubar
             // 
@@ -220,7 +164,7 @@
             this.helpMenuItem});
             this.menubar.Location = new System.Drawing.Point(0, 0);
             this.menubar.Name = "menubar";
-            this.menubar.Size = new System.Drawing.Size(634, 24);
+            this.menubar.Size = new System.Drawing.Size(543, 24);
             this.menubar.TabIndex = 3;
             // 
             // fileMenuItemOptions
@@ -414,8 +358,7 @@
             this.settingsSeparator1,
             this.optionsMenuItem,
             this.settingsSeparator2,
-            this.resetMenuItem,
-            this.reloadMenuItem});
+            this.resetMenuItem});
             this.settingsMenuItemOptions.Name = "settingsMenuItemOptions";
             this.settingsMenuItemOptions.Size = new System.Drawing.Size(61, 20);
             this.settingsMenuItemOptions.Text = "Settings";
@@ -423,61 +366,54 @@
             // backColorMenuItem
             // 
             this.backColorMenuItem.Name = "backColorMenuItem";
-            this.backColorMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.backColorMenuItem.Size = new System.Drawing.Size(180, 22);
             this.backColorMenuItem.Text = "Back Color";
             this.backColorMenuItem.Click += new System.EventHandler(this.backColorMenuItem_Click);
             // 
             // cellColorMenuItem
             // 
             this.cellColorMenuItem.Name = "cellColorMenuItem";
-            this.cellColorMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.cellColorMenuItem.Size = new System.Drawing.Size(180, 22);
             this.cellColorMenuItem.Text = "Cell Color";
             this.cellColorMenuItem.Click += new System.EventHandler(this.cellColorMenuItem_Click);
             // 
             // gridColorMenuItem
             // 
             this.gridColorMenuItem.Name = "gridColorMenuItem";
-            this.gridColorMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.gridColorMenuItem.Size = new System.Drawing.Size(180, 22);
             this.gridColorMenuItem.Text = "Grid Color";
             this.gridColorMenuItem.Click += new System.EventHandler(this.gridColorMenuItem_Click);
             // 
             // gridX10ColorMenuItem
             // 
             this.gridX10ColorMenuItem.Name = "gridX10ColorMenuItem";
-            this.gridX10ColorMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.gridX10ColorMenuItem.Size = new System.Drawing.Size(180, 22);
             this.gridX10ColorMenuItem.Text = "Grid x10 Color";
             this.gridX10ColorMenuItem.Click += new System.EventHandler(this.gridX10ColorMenuItem_Click);
             // 
             // settingsSeparator1
             // 
             this.settingsSeparator1.Name = "settingsSeparator1";
-            this.settingsSeparator1.Size = new System.Drawing.Size(146, 6);
+            this.settingsSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // optionsMenuItem
             // 
             this.optionsMenuItem.Name = "optionsMenuItem";
-            this.optionsMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.optionsMenuItem.Size = new System.Drawing.Size(180, 22);
             this.optionsMenuItem.Text = "Options";
             this.optionsMenuItem.Click += new System.EventHandler(this.optionsMenuItem_Click);
             // 
             // settingsSeparator2
             // 
             this.settingsSeparator2.Name = "settingsSeparator2";
-            this.settingsSeparator2.Size = new System.Drawing.Size(146, 6);
+            this.settingsSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // resetMenuItem
             // 
             this.resetMenuItem.Name = "resetMenuItem";
-            this.resetMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.resetMenuItem.Size = new System.Drawing.Size(180, 22);
             this.resetMenuItem.Text = "Reset";
             this.resetMenuItem.Click += new System.EventHandler(this.resetMenuItem_Click);
-            // 
-            // reloadMenuItem
-            // 
-            this.reloadMenuItem.Name = "reloadMenuItem";
-            this.reloadMenuItem.Size = new System.Drawing.Size(149, 22);
-            this.reloadMenuItem.Text = "Reload";
-            this.reloadMenuItem.Click += new System.EventHandler(this.reloadMenuItem_Click);
             // 
             // helpMenuItem
             // 
@@ -491,27 +427,16 @@
             // toolbarContainer.ContentPanel
             // 
             this.toolbarContainer.ContentPanel.Controls.Add(this.graphicsPanel);
-            this.toolbarContainer.ContentPanel.Size = new System.Drawing.Size(634, 540);
+            this.toolbarContainer.ContentPanel.Size = new System.Drawing.Size(543, 459);
             this.toolbarContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolbarContainer.Location = new System.Drawing.Point(0, 0);
             this.toolbarContainer.Name = "toolbarContainer";
-            this.toolbarContainer.Size = new System.Drawing.Size(634, 565);
+            this.toolbarContainer.Size = new System.Drawing.Size(543, 484);
             this.toolbarContainer.TabIndex = 6;
             // 
             // toolbarContainer.TopToolStripPanel
             // 
             this.toolbarContainer.TopToolStripPanel.Controls.Add(this.toolbar);
-            // 
-            // graphicsPanel
-            // 
-            this.graphicsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.graphicsPanel.Location = new System.Drawing.Point(0, 0);
-            this.graphicsPanel.Name = "graphicsPanel";
-            this.graphicsPanel.Size = new System.Drawing.Size(634, 540);
-            this.graphicsPanel.TabIndex = 0;
-            this.graphicsPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.graphicsPanel_Paint);
-            this.graphicsPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.graphicsPanel_MouseDown);
-            this.graphicsPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.graphicsPanel_MouseMove);
             // 
             // menubarContainer
             // 
@@ -519,11 +444,11 @@
             // menubarContainer.ContentPanel
             // 
             this.menubarContainer.ContentPanel.Controls.Add(this.toolbarContainer);
-            this.menubarContainer.ContentPanel.Size = new System.Drawing.Size(634, 565);
+            this.menubarContainer.ContentPanel.Size = new System.Drawing.Size(543, 484);
             this.menubarContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.menubarContainer.Location = new System.Drawing.Point(0, 0);
             this.menubarContainer.Name = "menubarContainer";
-            this.menubarContainer.Size = new System.Drawing.Size(634, 589);
+            this.menubarContainer.Size = new System.Drawing.Size(543, 508);
             this.menubarContainer.TabIndex = 7;
             // 
             // menubarContainer.TopToolStripPanel
@@ -548,11 +473,77 @@
             // 
             this.errorProvider.ContainerControl = this;
             // 
+            // newFileButton
+            // 
+            this.newFileButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.newFileButton.Image = global::GameOfLife.Properties.Resources.NewFile_16x;
+            this.newFileButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.newFileButton.Name = "newFileButton";
+            this.newFileButton.Size = new System.Drawing.Size(23, 22);
+            this.newFileButton.Click += new System.EventHandler(this.newFileButton_Click);
+            // 
+            // openFileButton
+            // 
+            this.openFileButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.openFileButton.Image = global::GameOfLife.Properties.Resources.OpenFolder_16x;
+            this.openFileButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.openFileButton.Name = "openFileButton";
+            this.openFileButton.Size = new System.Drawing.Size(23, 22);
+            this.openFileButton.Click += new System.EventHandler(this.openFileButton_Click);
+            // 
+            // saveFileButton
+            // 
+            this.saveFileButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.saveFileButton.Image = global::GameOfLife.Properties.Resources.Save_16x;
+            this.saveFileButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.saveFileButton.Name = "saveFileButton";
+            this.saveFileButton.Size = new System.Drawing.Size(23, 22);
+            this.saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
+            // 
+            // playButton
+            // 
+            this.playButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.playButton.Image = global::GameOfLife.Properties.Resources.StatusRun_16x;
+            this.playButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.playButton.Name = "playButton";
+            this.playButton.Size = new System.Drawing.Size(23, 22);
+            this.playButton.Click += new System.EventHandler(this.playButton_Click);
+            // 
+            // pauseButton
+            // 
+            this.pauseButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.pauseButton.Enabled = false;
+            this.pauseButton.Image = global::GameOfLife.Properties.Resources.Pause_16x;
+            this.pauseButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.pauseButton.Name = "pauseButton";
+            this.pauseButton.Size = new System.Drawing.Size(23, 22);
+            this.pauseButton.Click += new System.EventHandler(this.pauseButton_Click);
+            // 
+            // stepButton
+            // 
+            this.stepButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.stepButton.Image = global::GameOfLife.Properties.Resources.Next_16x;
+            this.stepButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.stepButton.Name = "stepButton";
+            this.stepButton.Size = new System.Drawing.Size(23, 22);
+            this.stepButton.Click += new System.EventHandler(this.stepButton_Click);
+            // 
+            // graphicsPanel
+            // 
+            this.graphicsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.graphicsPanel.Location = new System.Drawing.Point(0, 0);
+            this.graphicsPanel.Name = "graphicsPanel";
+            this.graphicsPanel.Size = new System.Drawing.Size(543, 459);
+            this.graphicsPanel.TabIndex = 0;
+            this.graphicsPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.graphicsPanel_Paint);
+            this.graphicsPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.graphicsPanel_MouseDown);
+            this.graphicsPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.graphicsPanel_MouseMove);
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(634, 611);
+            this.ClientSize = new System.Drawing.Size(543, 530);
             this.Controls.Add(this.menubarContainer);
             this.Controls.Add(this.statusbar);
             this.MainMenuStrip = this.menubar;
@@ -626,7 +617,6 @@
         private ToolStripMenuItem optionsMenuItem;
         private ToolStripSeparator settingsSeparator2;
         private ToolStripMenuItem resetMenuItem;
-        private ToolStripMenuItem reloadMenuItem;
         private ToolStripMenuItem helpMenuItem;
         private ToolStripContainer toolbarContainer;
         private ToolStripContainer menubarContainer;

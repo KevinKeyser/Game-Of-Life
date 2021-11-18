@@ -1,12 +1,7 @@
-﻿using GameOfLife.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+
+using GameOfLife.Models;
 
 namespace GameOfLife.Converters
 {
@@ -22,7 +17,7 @@ namespace GameOfLife.Converters
 
         private static bool Implements(Type typeToConvert)
         {
-            return interfaceType.IsAssignableFrom(typeToConvert);// && !typeToConvert.IsInterface;
+            return interfaceType.IsAssignableFrom(typeToConvert);
         }
 
         public override bool CanConvert(Type typeToConvert)
@@ -37,31 +32,39 @@ namespace GameOfLife.Converters
                 throw new JsonException();
             }
 
-            if (!reader.Read()
-                    || reader.TokenType != JsonTokenType.PropertyName
-                    || reader.GetString() != typePropertyName)
+            if (// Check that the next part is a property name of "Type"
+                !reader.Read()
+                || reader.TokenType != JsonTokenType.PropertyName
+                || reader.GetString() != typePropertyName
+                // Check that the next part is a string
+                || !reader.Read() 
+                || reader.TokenType != JsonTokenType.String)
             {
                 throw new JsonException();
             }
-            if (!reader.Read() || reader.TokenType != JsonTokenType.String)
-            {
-                throw new JsonException();
-            }
+
+            // Get string value and find corresponding type.
             var typeName = reader.GetString();
             var type = simulationTypes
                 .FirstOrDefault(type => type.FullName == typeName);
 
-            if(!reader.Read() 
+            if(// Check that the next part is a property name of "Simulation"
+                !reader.Read() 
                 || reader.TokenType != JsonTokenType.PropertyName
                 || reader.GetString() != simulationPropertyName
+                // Check that the following after the property name is an object
                 || !reader.Read()
                 || reader.TokenType != JsonTokenType.StartObject)
             {
                 throw new JsonException();
             }
+
+            // Deserialize json token starting at current object as a ISimulation of {type}
             var simulation = (ISimulation?)JsonSerializer.Deserialize(ref reader, type, options);
 
-            if (!reader.Read() || reader.TokenType != JsonTokenType.EndObject)
+            if (// Check that the next part ends the object
+                !reader.Read() 
+                || reader.TokenType != JsonTokenType.EndObject)
             {
                 throw new JsonException();
             }
@@ -77,8 +80,10 @@ namespace GameOfLife.Converters
                     break;
                 default:
                     writer.WriteStartObject();
+                    // Create property to hold the Type name
                     var type = value.GetType();
                     writer.WriteString(typePropertyName, type.FullName);
+                    // Create property to hold the simulation value
                     writer.WritePropertyName(simulationPropertyName);
                     JsonSerializer.Serialize(writer, value, type, options);
                     writer.WriteEndObject();

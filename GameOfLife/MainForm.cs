@@ -1,5 +1,5 @@
-using System.Text;
 using System.Text.Json;
+
 using GameOfLife.Converters;
 using GameOfLife.Models;
 
@@ -288,7 +288,6 @@ namespace GameOfLife
 
             simulation = (ISimulation)Activator.CreateInstance(newSimulationDialogForm.SimulationType);
             simulation.Initialize(CurrentSettings);
-            //simulation = new GameOfLifeSimulation(CurrentSettings.Options.UniverseWidth, CurrentSettings.Options.UniverseHeight);
             graphicsPanel.Invalidate();
         }
 
@@ -592,11 +591,6 @@ namespace GameOfLife
         private void resetMenuItem_Click(object sender, EventArgs e)
         {
             observableSettings.TrackedObject = Settings.Default;
-        }
-
-        private void reloadMenuItem_Click(object sender, EventArgs e)
-        {
-
         }
         #endregion
 

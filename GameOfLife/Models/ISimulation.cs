@@ -1,5 +1,6 @@
-﻿using GameOfLife.Converters;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+
+using GameOfLife.Converters;
 
 namespace GameOfLife.Models
 {

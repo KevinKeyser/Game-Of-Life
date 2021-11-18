@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace GameOfLife.Models
 {
@@ -130,6 +125,7 @@ namespace GameOfLife.Models
             var penGrid = new Pen(ColorExtensions.Lerp(settings.GridColor, Color.Transparent, .5f), 2);
             var penGrid10x = new Pen(settings.Grid10xColor, 2);
 
+            // Render cells and neighbor counts
             for (int x = 0; x < UniverseWidth; x++)
             {
                 for (int y = 0; y < UniverseHeight; y++)
@@ -181,6 +177,7 @@ namespace GameOfLife.Models
             #region Draw HUD
             if (settings.IsHudVisible)
             {
+                // Render container
                 var size = new SizeF(150, 50);
                 var brushColor = ColorExtensions.Lerp(Color.White, Color.Transparent, 0.50f);
                 graphics.FillPolygon(new SolidBrush(brushColor),
@@ -190,8 +187,10 @@ namespace GameOfLife.Models
                         new PointF(size.Width, graphics.ClipBounds.Height),
                         new PointF(0, graphics.ClipBounds.Height)
                         });
+
                 string infinite = "Infinite";
                 string finite = "Finite";
+                // Render text in container
                 graphics.DrawString($"Generation: {Generation}" +
                                     $"\nAlive: {AliveCount}" +
                                     $"\nBoundaryType: {(settings.IsWrappingUniverse ? infinite : finite)}" +
@@ -215,7 +214,6 @@ namespace GameOfLife.Models
                 graphics.DrawString($"{neighborCount}", font, brush, x * width + (width - size.Width) / 2, y * height + (height - size.Height) / 2);
             }
         }
-
         private void ResizeUniverse(int width, int height)
         {
             generation = 0;

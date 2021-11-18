@@ -417,6 +417,7 @@
             // 
             // helpMenuItem
             // 
+            this.helpMenuItem.Enabled = false;
             this.helpMenuItem.Name = "helpMenuItem";
             this.helpMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpMenuItem.Text = "Help";

@@ -36,6 +36,12 @@ namespace GameOfLife.Models
             set => ResizeUniverse(UniverseWidth, value);
         }
 
+        public GameOfLifeSimulation()
+        {
+            generation = 0;
+            universe = new bool[0, 0];
+        }
+
         [JsonConstructor]
         public GameOfLifeSimulation(int generation, bool[,] universe)
         {
@@ -49,6 +55,12 @@ namespace GameOfLife.Models
                     aliveCount += universe[x, y] ? 1 : 0;
                 }
             }
+        }
+
+        public void Initialize(Settings settings)
+        {
+            generation = 0;
+            universe = new bool[settings.Options.UniverseWidth, settings.Options.UniverseHeight];
         }
 
         public GameOfLifeSimulation(int width, int height)
@@ -115,6 +127,8 @@ namespace GameOfLife.Models
             var cellHeight = graphicsHeight / UniverseHeight;
 
             var brush = new SolidBrush(settings.CellColor);
+            var penGrid = new Pen(ColorExtensions.Lerp(settings.GridColor, Color.Transparent, .5f), 2);
+            var penGrid10x = new Pen(settings.Grid10xColor, 2);
 
             for (int x = 0; x < UniverseWidth; x++)
             {
@@ -130,6 +144,61 @@ namespace GameOfLife.Models
                     }
                 }
             }
+
+            #region Draw Grid
+            if (settings.IsGridVisible)
+            {
+                // Render columns
+                for (var x = 0; x <= UniverseWidth; x++)
+                {
+                    var point1 = new PointF(graphics.ClipBounds.X + x * cellWidth, graphics.ClipBounds.Y);
+                    var point2 = new PointF(graphics.ClipBounds.X + x * cellWidth, graphics.ClipBounds.Height);
+
+                    var pen = penGrid;
+                    if (x % 10 == 0)
+                    {
+                        pen = penGrid10x;
+                    }
+                    graphics.DrawLine(pen, point1, point2);
+                }
+
+                // Render rows
+                for (var y = 0; y <= UniverseHeight; y++)
+                {
+                    var point1 = new PointF(graphics.ClipBounds.X, graphics.ClipBounds.Y + y * cellHeight);
+                    var point2 = new PointF(graphics.ClipBounds.Width, graphics.ClipBounds.Y + y * cellHeight);
+
+                    var pen = penGrid;
+                    if (y % 10 == 0)
+                    {
+                        pen = penGrid10x;
+                    }
+                    graphics.DrawLine(pen, point1, point2);
+                }
+            }
+            #endregion
+
+            #region Draw HUD
+            if (settings.IsHudVisible)
+            {
+                var size = new SizeF(150, 50);
+                var brushColor = ColorExtensions.Lerp(Color.White, Color.Transparent, 0.50f);
+                graphics.FillPolygon(new SolidBrush(brushColor),
+                    new[]{
+                        new PointF(0, graphics.ClipBounds.Height - size.Height),
+                        new PointF(size.Width, graphics.ClipBounds.Height - size.Height),
+                        new PointF(size.Width, graphics.ClipBounds.Height),
+                        new PointF(0, graphics.ClipBounds.Height)
+                        });
+                string infinite = "Infinite";
+                string finite = "Finite";
+                graphics.DrawString($"Generation: {Generation}" +
+                                    $"\nAlive: {AliveCount}" +
+                                    $"\nBoundaryType: {(settings.IsWrappingUniverse ? infinite : finite)}" +
+                                    $"\nUniverse Size: {UniverseWidth} x {UniverseHeight}",
+                    font, Brushes.Black, new PointF(0, graphics.ClipBounds.Height - size.Height));
+            }
+            #endregion
         }
 
         private void DrawNeighborCount(Graphics graphics, int x, int y, float width, float height, Settings settings)

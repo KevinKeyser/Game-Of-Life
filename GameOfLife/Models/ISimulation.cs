@@ -4,13 +4,15 @@ using System.Text.Json.Serialization;
 namespace GameOfLife.Models
 {
 
-    //[JsonConverter(typeof(SimulationJsonConverter))]
+    [JsonConverter(typeof(SimulationJsonConverter))]
     public interface ISimulation
     {
         int Generation { get; }
         int UniverseWidth { get; set; }
         int UniverseHeight { get; set; }
         int AliveCount { get; }
+
+        void Initialize(Settings settings);
 
         void Set(int x, int y, bool value);
 

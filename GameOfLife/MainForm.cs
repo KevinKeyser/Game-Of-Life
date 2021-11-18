@@ -18,7 +18,8 @@ namespace GameOfLife
             }
         };
 
-        private GameOfLifeSimulation simulation = new GameOfLifeSimulation(Settings.Default.Options.UniverseWidth, Settings.Default.Options.UniverseHeight);
+        private ISimulation simulation = new GameOfLifeSimulation(Settings.Default.Options.UniverseWidth, Settings.Default.Options.UniverseHeight);
+        private NewSimulationDialogForm newSimulationDialogForm = new NewSimulationDialogForm();
         private SimulateToDialogForm simulateToDialogForm = new SimulateToDialogForm();
         private SeedDialogForm seedDialog = new SeedDialogForm();
         private OptionsDialogForm optionsDialog = new OptionsDialogForm();
@@ -46,12 +47,20 @@ namespace GameOfLife
         public MainForm()
         {
             InitializeComponent();
+            // Get compiled .Net version and use it as the title
             Text = $"Game of Life (.NET {Environment.Version})";
+
+            // Setup observable functionality
             observableSettings.PropertyChanging += (sender, e) => DisposeSettings();
             observableSettings.PropertyChanged += (sender, e) => InitializeSettings();
             observableSettings.TrackedObject = GetSavedSettings();
         }
 
+        #region Core Functionality
+        /// <summary>
+        /// Save and serialize current settings into ../AppData/Roaming/VigilantGames/GameOfLife/Settings.json.
+        /// </summary>
+        /// <returns>True if the settings saved properly.</returns>
         private bool TrySaveSettings()
         {
             var userAppDataLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
@@ -90,6 +99,11 @@ namespace GameOfLife
             return false;
         }
 
+        /// <summary>
+        /// Get and deserialize settings from ../AppData/Roaming/VigilantGames/GameOfLife/Settings.json.
+        /// If the settings doesn't exist, returns the default settings.
+        /// </summary>
+        /// <returns>Saved <see cref="Settings"/></returns>
         private Settings GetSavedSettings()
         {
             var userAppDataLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
@@ -119,7 +133,13 @@ namespace GameOfLife
             return settings;
         }
         
-        private bool TrySaveSimulation(string path, GameOfLifeSimulation simulation)
+        /// <summary>
+        /// Serialize and save <see cref="ISimulation"/> at given file path.
+        /// </summary>
+        /// <param name="path">File save path.</param>
+        /// <param name="simulation"><see cref="ISimulation"/> to save.</param>
+        /// <returns>True if <see cref="ISimulation"/> saved properly.</returns>
+        private bool TrySaveSimulation(string path, ISimulation simulation)
         {
             FileStream fileStream;
             if (!File.Exists(path))
@@ -148,7 +168,13 @@ namespace GameOfLife
             return false;
         }
 
-        private bool TryGetSavedSimulation(string path, out GameOfLifeSimulation? simulation)
+        /// <summary>
+        /// Deserialize <see cref="ISimulation"/> from given path.
+        /// </summary>
+        /// <param name="path">Saved file path.</param>
+        /// <param name="simulation">Deserialized <see cref="ISimulation"/>.</param>
+        /// <returns>True if deserialization into <paramref name="simulation"/> worked properly.</returns>
+        private bool TryGetSavedSimulation(string path, out ISimulation? simulation)
         {
             simulation = null;
             if (File.Exists(path))
@@ -158,7 +184,7 @@ namespace GameOfLife
 
                 try
                 {
-                    var tempSimulation = JsonSerializer.Deserialize<GameOfLifeSimulation?>(streamReader.ReadToEnd(), jsonSerializerOptions);
+                    var tempSimulation = JsonSerializer.Deserialize<ISimulation?>(streamReader.ReadToEnd(), jsonSerializerOptions);
                     if (tempSimulation != null)
                     {
                         simulation = tempSimulation;
@@ -177,6 +203,9 @@ namespace GameOfLife
             return false;
         }
 
+        /// <summary>
+        /// Initialize current settings when settings reference has changed due to loading a save file.
+        /// </summary>
         private void InitializeSettings()
         {
             CurrentSettings.PropertyChanged += CurrentSettings_PropertyChanged;
@@ -191,6 +220,9 @@ namespace GameOfLife
             graphicsPanel.Invalidate();
         }
 
+        /// <summary>
+        /// Clean up old settings before reference is lost.
+        /// </summary>
         private void DisposeSettings()
         {
             if (CurrentSettings != null)
@@ -199,9 +231,129 @@ namespace GameOfLife
             }
         }
 
+        /// <summary>
+        /// Start running simulation.
+        /// </summary>
+        private void RunSimulation()
+        {
+            playButton.Enabled = false;
+            startMenuItem.Enabled = false;
+            stepButton.Enabled = false;
+            nextMenuItem.Enabled = false;
+            pauseButton.Enabled = true;
+            pauseMenuItem.Enabled = true;
+            timer.Start();
+        }
+
+        /// <summary>
+        /// Stop running simulation.
+        /// </summary>
+        private void StopSimulation()
+        {
+            playButton.Enabled = true;
+            startMenuItem.Enabled = true;
+            stepButton.Enabled = true;
+            nextMenuItem.Enabled = true;
+            pauseButton.Enabled = false;
+            pauseMenuItem.Enabled = false;
+            simulateToGeneration = null;
+            timer.Stop();
+        }
+
+        /// <summary>
+        /// Step one generation in simulation.
+        /// </summary>
+        private void StepSimulation()
+        {
+            if(simulateToGeneration is not null
+                && simulateToGeneration <= simulation.Generation)
+            {
+                StopSimulation();
+                return;
+            }
+            simulation.Update(CurrentSettings);
+            graphicsPanel.Invalidate();
+        }
+
+        /// <summary>
+        /// Set new clean slated simulation environment.
+        /// </summary>
+        public void NewFile()
+        {
+            var result = newSimulationDialogForm.ShowDialog(this);
+            if(result != DialogResult.OK)
+            {
+                return;
+            }
+
+            simulation = (ISimulation)Activator.CreateInstance(newSimulationDialogForm.SimulationType);
+            simulation.Initialize(CurrentSettings);
+            //simulation = new GameOfLifeSimulation(CurrentSettings.Options.UniverseWidth, CurrentSettings.Options.UniverseHeight);
+            graphicsPanel.Invalidate();
+        }
+
+        /// <summary>
+        /// Open file dialog and set current simulation.
+        /// </summary>
+        public void OpenFileDialog()
+        {
+            var result = openFileDialog.ShowDialog(this);
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+
+            if (TryGetSavedSimulation(openFileDialog.FileName, out var simulation)
+                && simulation is not null)
+            {
+                this.simulation = simulation;
+                graphicsPanel.Invalidate();
+                CurrentSettings.Options =
+                    new Options(CurrentSettings.Options.TimerInterval,
+                        simulation.UniverseWidth,
+                        simulation.UniverseHeight);
+            }
+            else
+            {
+                MessageBox.Show(this, "Could not load file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Open Save Dialog for current simulation.
+        /// </summary>
+        public void SaveFileDialog()
+        {
+            var result = saveFileDialog.ShowDialog(this);
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+
+            if (!TrySaveSimulation(saveFileDialog.FileName, simulation))
+            {
+                MessageBox.Show(this, "Could not save file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Exit Application.
+        /// </summary>
+        public void ExitApplication()
+        {
+            Close();
+        }
+        #endregion
+
+        #region Core Events
+        /// <summary>
+        /// Listener for when properties in observabled settings has changed.
+        /// </summary>
+        /// <param name="sender">Object that is sending the event.</param>
+        /// <param name="e">Property information for observed changed.</param>
         private void CurrentSettings_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(Settings.Options))
+            if (e.PropertyName == nameof(Settings.Options))
             {
                 timer.Interval = CurrentSettings.Options.TimerInterval;
                 intervalStatusLabel.Text = $"Interval: {timer.Interval}";
@@ -228,44 +380,11 @@ namespace GameOfLife
             {
                 wrapUniverseMenuItem.Checked = CurrentSettings.IsWrappingUniverse;
             }
+
+            // Save changed settings
             TrySaveSettings();
 
-            //Invalidate graphicsPanel   
-            graphicsPanel.Invalidate();
-        }
-
-        private void RunSimulation()
-        {
-            playButton.Enabled = false;
-            startMenuItem.Enabled = false;
-            stepButton.Enabled = false;
-            nextMenuItem.Enabled = false;
-            pauseButton.Enabled = true;
-            pauseMenuItem.Enabled = true;
-            timer.Start();
-        }
-
-        private void StopSimulation()
-        {
-            playButton.Enabled = true;
-            startMenuItem.Enabled = true;
-            stepButton.Enabled = true;
-            nextMenuItem.Enabled = true;
-            pauseButton.Enabled = false;
-            pauseMenuItem.Enabled = false;
-            simulateToGeneration = null;
-            timer.Stop();
-        }
-
-        private void StepSimulation()
-        {
-            if(simulateToGeneration is not null
-                && simulateToGeneration <= simulation.Generation)
-            {
-                StopSimulation();
-                return;
-            }
-            simulation.Update(CurrentSettings);
+            // Force redraw of graphicsPanel   
             graphicsPanel.Invalidate();
         }
 
@@ -274,132 +393,21 @@ namespace GameOfLife
             StepSimulation();
         }
 
-        private Color Lerp(Color color1, Color color2, float lerp)
-        {
-            var inverseLerp = 1 - lerp;
-            var red = color1.R * lerp + color2.R * inverseLerp;
-            var green = color1.G * lerp + color2.G * inverseLerp;
-            var blue = color1.B * lerp + color2.B * inverseLerp;
-            var alpha = color1.A * lerp + color2.A * inverseLerp;
-
-            return Color.FromArgb((int)alpha, (int)red, (int)green, (int)blue);
-        }
-
         private void graphicsPanel_Paint(object sender, PaintEventArgs e)
         {
             var graphics = e.Graphics;
 
-            var cellXCount = CurrentSettings.Options.UniverseWidth;
-            var cellYCount = CurrentSettings.Options.UniverseHeight;
-
-            var cellWidth = graphics.ClipBounds.Width / cellXCount;
-            var cellHeight = graphics.ClipBounds.Height / cellYCount;
-
-            var penGrid = new Pen(Lerp(CurrentSettings.GridColor, Color.Transparent, .5f), 2);
-            var penGrid10x = new Pen(CurrentSettings.Grid10xColor, 2);
-
             simulation.Draw(graphics, CurrentSettings);
 
-            #region Draw Grid
-            if (CurrentSettings.IsGridVisible)
-            {
-                for (var x = 0; x <= cellXCount; x++)
-                {
-                    var point1 = new PointF(graphics.ClipBounds.X + x * cellWidth, graphics.ClipBounds.Y);
-                    var point2 = new PointF(graphics.ClipBounds.X + x * cellWidth, graphics.ClipBounds.Height);
-
-                    var pen = penGrid;
-                    if(x % 10 == 0)
-                    {
-                        pen = penGrid10x;
-                    }
-                    graphics.DrawLine(pen, point1, point2);
-                }
-
-                for (var y = 0; y <= cellYCount; y++)
-                {
-                    var point1 = new PointF(graphics.ClipBounds.X, graphics.ClipBounds.Y + y * cellHeight);
-                    var point2 = new PointF(graphics.ClipBounds.Width, graphics.ClipBounds.Y + y * cellHeight);
-
-                    var pen = penGrid;
-                    if (y % 10 == 0)
-                    {
-                        pen = penGrid10x;
-                    }
-                    graphics.DrawLine(pen, point1, point2);
-                }
-            }
-            #endregion
-
-            #region Draw HUD
-            if(CurrentSettings.IsHudVisible)
-            {
-                var size = new SizeF(150, 50);
-                var brushColor = Lerp(Color.White, Color.Transparent, 0.50f);
-                graphics.FillPolygon(new SolidBrush(brushColor),
-                    new[]{
-                        new PointF(0, graphics.ClipBounds.Height - size.Height),
-                        new PointF(size.Width, graphics.ClipBounds.Height - size.Height),
-                        new PointF(size.Width, graphics.ClipBounds.Height),
-                        new PointF(0, graphics.ClipBounds.Height)
-                        });
-                string infinite = "Infinite";
-                string finite = "Finite";
-                graphics.DrawString($"Generation: {simulation.Generation}\nAlive: {simulation.AliveCount}\nBoundaryType: {(CurrentSettings.IsWrappingUniverse ? infinite : finite)}\nUniverse Size: {simulation.UniverseWidth} x {simulation.UniverseHeight}", Font, Brushes.Black, new PointF(0, graphics.ClipBounds.Height - size.Height));
-            }
             generationsStatusLabel.Text = $"Generation: {simulation.Generation}";
             aliveStatusLabel.Text = $"Alive: {simulation.AliveCount}";
-            #endregion
         }
 
-        public void NewFile()
+        private void MainForm_Resize(object sender, EventArgs e)
         {
-            simulation = new GameOfLifeSimulation(CurrentSettings.Options.UniverseWidth, CurrentSettings.Options.UniverseHeight);
             graphicsPanel.Invalidate();
         }
-
-        public void OpenFileDialog()
-        {
-            var result = openFileDialog.ShowDialog(this);
-            if (result != DialogResult.OK)
-            {
-                return;
-            }
-
-            if (TryGetSavedSimulation(openFileDialog.FileName, out var simulation)
-                && simulation is not null)
-            {
-                this.simulation = simulation;
-                graphicsPanel.Invalidate();
-                CurrentSettings.Options =
-                    new Options(CurrentSettings.Options.TimerInterval,
-                    simulation.UniverseWidth,
-                    simulation.UniverseHeight);
-            }
-            else
-            {
-                MessageBox.Show(this, "Could not load file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        public void SaveFileDialog()
-        {
-            var result = saveFileDialog.ShowDialog(this);
-            if (result != DialogResult.OK)
-            {
-                return;
-            }
-
-            if(!TrySaveSimulation(saveFileDialog.FileName, simulation))
-            {
-                MessageBox.Show(this, "Could not save file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        public void ExitDialog()
-        {
-            Close();
-        }
+        #endregion
 
         #region Toolbar
         private void newFileButton_Click(object sender, EventArgs e)
@@ -451,7 +459,7 @@ namespace GameOfLife
 
         private void exitMenuItem_Click(object sender, EventArgs e)
         {
-            ExitDialog();
+            ExitApplication();
         }
         #endregion
 
@@ -631,10 +639,5 @@ namespace GameOfLife
             HandleMouseInputs(mouseEventArgs);
         }
         #endregion
-
-        private void MainForm_Resize(object sender, EventArgs e)
-        {
-            graphicsPanel.Invalidate();
-        }
     }
 }
